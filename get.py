@@ -13,39 +13,43 @@ def violators():
     while True: #Running in a seperate thread always on if the server is on
         response = requests.get('https://assignments.reaktor.com/birdnest/drones') #get drone data
 
-        print("doing things")
+        
         if response.status_code == 200:
             root = ET.fromstring(response.text) #make xml element tree
 
             time = root.find("capture").get("snapshotTimestamp") # find the time of the sample
+            if time != None:
+                time = parser.parse(time) # change time to datetime
 
-            time = parser.parse(time) # change time to datetime
-            drones = root.find("capture").findall("drone") # find all individual drones
-
-            for owner in Owner.objects.all(): #delete any users in database with longer that 10min last violation
-                if relativedelta.relativedelta(time,owner.lastViolation).minutes >= 10 :
-                    owner.delete()
                 
 
-            for drone in drones: #calculate drone distance to middle and if its less than 100m update user in database or create one
-                posX = float(drone.find("positionX").text)
-                posY = float(drone.find("positionY").text)
-                dist = math.sqrt((posX-250000)**2 + (posY-250000)**2 )
-                distM = dist/1000
-                if distM<100:
-                    serialNumber = drone.find("serialNumber").text
-                    request = requests.get('https://assignments.reaktor.com/birdnest/pilots/' + serialNumber)
-                    if request.status_code == 200:
-                        json = request.json()
-                        name = json["firstName"] + " " + json["lastName"] 
-                        contactInformation = json["phoneNumber"]
-                        s = Owner.objects.all().filter(name = name).first()
-                        if s != None: 
-                            s.closestViolation = min(s.closestViolation,distM)
-                            s.lastViolation = time
-                            s.save()
-                        else:
-                            q = Owner(name = name, contactInformation = contactInformation, closestViolation = distM, lastViolation = time)
-                            q.save()
+                for owner in Owner.objects.all(): #delete any users in database with longer that 10min last violation
+                    if relativedelta.relativedelta(time,owner.lastViolation).minutes >= 10 :
+                        owner.delete()
                     
+                drones = root.find("capture").findall("drone") # find all individual drones
+                for drone in drones: #calculate drone distance to middle and if its less than 100m update user in database or create one
+                    posX = float(drone.find("positionX").text)
+                    posY = float(drone.find("positionY").text)
+                    dist = math.sqrt((posX-250000)**2 + (posY-250000)**2 )
+                    distM = dist/1000
+                    if distM<100:
+                        serialNumber = drone.find("serialNumber").text
+                        request = requests.get('https://assignments.reaktor.com/birdnest/pilots/' + serialNumber)
+                        if request.status_code == 200:
+                            json = request.json()
+                            if "firstName" and "lastName" and "phoneNumber" in json:
+                                name = json["firstName"] + " " + json["lastName"] 
+                                contactInformation = json["phoneNumber"]
+                                s = Owner.objects.all().filter(name = name).first()
+                                if s != None: 
+                                    s.closestViolation = min(s.closestViolation,distM)
+                                    s.lastViolation = time
+                                    s.save()
+                                else:
+                                    q = Owner(name = name, contactInformation = contactInformation, closestViolation = distM, lastViolation = time)
+                                    q.save()
+                            else:
+                                print("was not")
+                        
         tiima.sleep(1)
