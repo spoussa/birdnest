@@ -6,6 +6,5 @@ import get
 from django.http import HttpResponse
 
 def home(request):
-    #vios = get.violators()
     db =  Owner.objects.all()
     return render(request,"home.html",{"items" : db})
