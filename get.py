@@ -33,8 +33,8 @@ def violators():
                 dist = math.sqrt((posX-250000)**2 + (posY-250000)**2 )
                 distM = dist/1000
                 if distM<100:
-                    SN = drone.find("serialNumber").text
-                    request = requests.get('https://assignments.reaktor.com/birdnest/pilots/' + SN)
+                    serialNumber = drone.find("serialNumber").text
+                    request = requests.get('https://assignments.reaktor.com/birdnest/pilots/' + serialNumber)
                     if request.status_code == 200:
                         json = request.json()
                         name = json["firstName"] + " " + json["lastName"] 
