@@ -1,0 +1,11 @@
+<h1>NDZ Violators</h1>
+<ul>
+    {% for item in items %}
+    <li>{{ item.str }}</li>
+    {% endfor %}
+  </ul>
+  <script>
+    setTimeout(function(){
+   window.location.reload(1);
+  }, 2000);
+  </script>
