@@ -1,3 +1,10 @@
 body{
-    background-color: aqua;
+    background-color: seashell;
+    
+}
+li {
+    list-style: square
+}
+ul{
+    font-size: large;
 }
