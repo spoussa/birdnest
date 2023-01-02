@@ -50,4 +50,4 @@ def violators():
                                     q.save()
                             
                         
-        sleep(1)
+        sleep(2)
