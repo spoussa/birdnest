@@ -4,7 +4,7 @@ from django.db import models
 
 
 class Owner(models.Model): 
-    name = models.CharField(max_length=200, primary_key=True)
+    name = models.CharField(max_length=200)
     contactInformation = models.CharField(max_length=200)
     closestViolation = models.FloatField(default=100)
     lastViolation = models.DateTimeField("last Violation")

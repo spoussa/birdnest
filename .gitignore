@@ -2,4 +2,4 @@ db.sqlite3
 .venv
 .vscode
 __pycache__
-
+hello/__pycache__
