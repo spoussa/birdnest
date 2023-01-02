@@ -4,8 +4,7 @@ import math
 from datetime import *
 from dateutil import parser, relativedelta
 from hello.models import Owner
-import time as tiima
-
+from time import sleep
 
 
 def violators():
@@ -49,7 +48,6 @@ def violators():
                                 else:
                                     q = Owner(name = name, contactInformation = contactInformation, closestViolation = distM, lastViolation = time)
                                     q.save()
-                            else:
-                                print("was not")
+                            
                         
-        tiima.sleep(1)
+        sleep(1)
