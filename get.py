@@ -5,12 +5,26 @@ from datetime import *
 from dateutil import parser, relativedelta
 from hello.models import Owner
 from time import sleep
-
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 def violators():
 
     while True: #Running in a seperate thread always on if the server is on
-        response = requests.get('https://assignments.reaktor.com/birdnest/drones') #get drone data
+
+         #get drone data
+        url = 'https://assignments.reaktor.com/birdnest/drones'
+
+        session = requests.Session()
+        retry = Retry(connect=3, backoff_factor=0.5)
+        adapter = HTTPAdapter(max_retries=retry)
+        session.mount('http://', adapter)
+        session.mount('https://', adapter)
+
+        response = session.get(url)
+
+
+        
 
         
         if response.status_code == 200:

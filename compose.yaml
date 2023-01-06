@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: birdnest
+  labels:
+    app: birdnest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: birdnest
+  template:
+    metadata:
+      labels:
+        app: birdnest
+    spec:
+      containers:
+      - name: birdnest
+        image: docker.io/santeripoussa/birdnest:latest
+        ports:
+        - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: birdnest-svc
+  labels:
+    app: birdnest
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+  selector:
+    app: birdnest
